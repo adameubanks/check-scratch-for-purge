@@ -14,13 +14,13 @@ end
 get '/' do
   if params['action'] == 'downloadToScratch'
     command = Command.new
-    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /scratch/$USER/output.txt")
+    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > ~/scratch/$USER/output.txt")#("ls > ~/Downloads/output.txt")
   elsif params['action'] == 'downloadToHome'
     command = Command.new
-    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /home/$USER/output.txt")
+    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > ~/home/$USER/output.txt")#("ls > ~/Documents/output.txt")
   end
   command = Command.new
-  output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print")
+  output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print")#("ls")
   output = command.parse(output)
 
   erb :index, locals: { output: output, error: error }
