@@ -2,7 +2,7 @@ require 'open3'
 
 class Command
   def to_s
-    "/share/resources/HPCtools/check-scratch-for-purge"
+    "find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print"
   end
 
   def parse(output)
@@ -18,12 +18,14 @@ class Command
 
   def exec
     processes, error = [], nil
-
+  
     stdout, stderr, status = Open3.capture3(to_s)
+    stdout.force_encoding('UTF-8')
+    
     output = stdout + stderr
-
+  
     processes = parse(output) if status.success?
-
+  
     [processes, error]
   end
 end
