@@ -21,17 +21,9 @@
         <h3> Or </h3>
       </div>
       <div class="col-auto">
-        <button id="saveToScratch" class="btn btn-primary">Save Output to /scratch</button>
-      </div>
-      <div class="col-auto">
-        <h3> Or </h3>
-      </div>
-      <div class="col-auto">
-        <button id="saveToHome" class="btn btn-primary">Save Output to /home</button>
+        <button id="download" class="btn btn-primary">Download Output</button>
       </div>
     </div>
-
-
     <div id="outputSection" style="display: none;">
       <% if error %>
         <p>Error: <%= error %></p>
@@ -61,30 +53,24 @@
           console.error('Element with ID "outputSection" not found.');
         }
       });
-    });
-    document.getElementById('saveToScratch').addEventListener('click', function() {
-      fetch('/save_to_scratch', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: document.getElementById('outputSection').innerText }),
-      })
-      .then(response => response.text())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
-    });
-    document.getElementById('saveToHome').addEventListener('click', function() {
-      fetch('/save_to_home', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: document.getElementById('outputSection').innerText }),
-      })
-      .then(response => response.text())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error:', error));
+      document.getElementById('download').addEventListener('click', function() {
+        var outputSection = document.getElementById('outputSection');
+        var textToDownload = outputSection.innerText; // Get the text content of outputSection
+        var blob = new Blob([textToDownload], { type: 'text/plain' }); // Create a Blob from the text
+        var url = URL.createObjectURL(blob); // Create a URL for the Blob
+
+        // Create a temporary anchor (`<a>`) element to trigger the download
+        var downloader = document.createElement('a');
+        downloader.href = url; // Set the href to the Blob URL
+        downloader.download = 'output.txt'; // Set the default filename for the download
+
+        // Append the anchor to the body, click it, and then remove it
+        document.body.appendChild(downloader);
+        downloader.click();
+        document.body.removeChild(downloader);
+        // Revoke the Blob URL to free up resources
+        URL.revokeObjectURL(url);
+      });
     });
   </script>
 </body>
