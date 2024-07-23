@@ -11,33 +11,81 @@
     </button>
   </nav>
   <div class="container">
-    <h1>Check scratch for purge</h1>
-    <form action="/process_form" method="post">
-      <div class="form-group">
-        <label>Would you like your output written to a file?</label><br>
-        <input type="radio" id="yes" name="writeToFile" value="yes">
-        <label for="yes">Yes</label><br>
-        <input type="radio" id="no" name="writeToFile" value="no" checked>
-        <label for="no">No</label>
+    <br>
+    <h1>Check <span style="font-family: monospace; background-color: #f2f2f2;">/scratch</span> for purge</h1><br>
+    <div class="row justify-content-center">
+      <div class="col-auto">
+        <button id="toggleOutputBtn" class="btn btn-primary">Show Output</button>
       </div>
-      <div class="form-group">
-        <label>If yes, where would you like the file written?</label><br>
-        <input type="radio" id="home" name="fileLocation" value="home">
-        <label for="home">Home</label><br>
-        <input type="radio" id="scratch" name="fileLocation" value="scratch">
-        <label for="scratch">Scratch</label>
+      <div class="col-auto">
+        <h3> Or </h3>
       </div>
-      <button type="submit" class="btn btn-primary">Run the command</button>
-    </form>
-    <% if @display_table %>
-    <table class="table table-bordered">
-      <% @processes.each do |line| %>
-      <tr>
-        <td><%= line %></td>
-      </tr>
+      <div class="col-auto">
+        <button id="saveToScratch" class="btn btn-primary">Save Output to /scratch</button>
+      </div>
+      <div class="col-auto">
+        <h3> Or </h3>
+      </div>
+      <div class="col-auto">
+        <button id="saveToHome" class="btn btn-primary">Save Output to /home</button>
+      </div>
+    </div>
+
+
+    <div id="outputSection" style="display: none;">
+      <% if error %>
+        <p>Error: <%= error %></p>
+      <% else %>
+        <p>These files will be purged:</p>
+        <ul>
+          <% processes.each do |process| %>
+            <li><%= process %></li>
+          <% end %>
+        </ul>
       <% end %>
-    </table>
-    <% end %>
+    </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      document.getElementById('toggleOutputBtn').addEventListener('click', function() {
+        var outputSection = document.getElementById('outputSection');
+        if (outputSection) { // Check if the element exists
+          if (outputSection.style.display === 'none') {
+            outputSection.style.display = 'block';
+            this.textContent = 'Hide Output';
+          } else {
+            outputSection.style.display = 'none';
+            this.textContent = 'Show Output';
+          }
+        } else {
+          console.error('Element with ID "outputSection" not found.');
+        }
+      });
+    });
+    document.getElementById('saveToScratch').addEventListener('click', function() {
+      fetch('/save_to_scratch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: document.getElementById('outputSection').innerText }),
+      })
+      .then(response => response.text())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+    });
+    document.getElementById('saveToHome').addEventListener('click', function() {
+      fetch('/save_to_home', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: document.getElementById('outputSection').innerText }),
+      })
+      .then(response => response.text())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
 </body>
 </html>

@@ -2,7 +2,8 @@ require 'open3'
 
 class Command
   def to_s
-    "find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print"
+    #"find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print"
+    "ls"
   end
 
   def parse(output)
