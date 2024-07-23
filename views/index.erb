@@ -12,17 +12,32 @@
   </nav>
   <div class="container">
     <h1>Check scratch for purge</h1>
-    Output generated: <%= Time.now %>
-    <pre>
-    $ check-scratch-for-purge
-    </pre>
+    <form action="/process_form" method="post">
+      <div class="form-group">
+        <label>Would you like your output written to a file?</label><br>
+        <input type="radio" id="yes" name="writeToFile" value="yes">
+        <label for="yes">Yes</label><br>
+        <input type="radio" id="no" name="writeToFile" value="no" checked>
+        <label for="no">No</label>
+      </div>
+      <div class="form-group">
+        <label>If yes, where would you like the file written?</label><br>
+        <input type="radio" id="home" name="fileLocation" value="home">
+        <label for="home">Home</label><br>
+        <input type="radio" id="scratch" name="fileLocation" value="scratch">
+        <label for="scratch">Scratch</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Run the command</button>
+    </form>
+    <% if @display_table %>
     <table class="table table-bordered">
-      <% @processes.each do |line| %> <!-- Fixed syntax here -->
+      <% @processes.each do |line| %>
       <tr>
         <td><%= line %></td>
       </tr>
       <% end %>
     </table>
+    <% end %>
   </div>
 </body>
 </html>
