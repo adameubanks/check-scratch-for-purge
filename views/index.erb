@@ -1,0 +1,28 @@
+<html>
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
+</head>
+<body>  
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #53565a;">
+    <a class="navbar-brand" href="/pun/sys/dashboard/">UVA Open OnDemand</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+  <div class="container">
+    <h1>Check scratch for purge</h1>
+    Output generated: <%= Time.now %>
+    <pre>
+    $ check-scratch-for-purge
+    </pre>
+    <table class="table table-bordered">
+      <% @processes.each do |line| %> <!-- Fixed syntax here -->
+      <tr>
+        <td><%= line %></td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</body>
+</html>
