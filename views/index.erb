@@ -21,7 +21,10 @@
         <h3> Or </h3>
       </div>
       <div class="col-auto">
-        <button id="download" class="btn btn-primary">Download Output</button>
+        <form action="/" method="get">
+          <button type="submit" name="action" value="downloadToScratch" class="btn btn-primary">Download to Scratch</button>
+          <button type="submit" name="action" value="downloadToHome" class="btn btn-primary">Download to Home</button>
+        </form>
       </div>
     </div>
     <div id="outputSection" style="display: none;">
@@ -30,8 +33,8 @@
       <% else %>
         <p>These files will be purged:</p>
         <ul>
-          <% processes.each do |process| %>
-            <li><%= process %></li>
+          <% output.each do |line| %>
+            <li><%= line %></li>
           <% end %>
         </ul>
       <% end %>
@@ -53,24 +56,24 @@
           console.error('Element with ID "outputSection" not found.');
         }
       });
-      document.getElementById('download').addEventListener('click', function() {
-        var outputSection = document.getElementById('outputSection');
-        var textToDownload = outputSection.innerText; // Get the text content of outputSection
-        var blob = new Blob([textToDownload], { type: 'text/plain' }); // Create a Blob from the text
-        var url = URL.createObjectURL(blob); // Create a URL for the Blob
+      // document.getElementById('download').addEventListener('click', function() {
+      //   var outputSection = document.getElementById('outputSection');
+      //   var textToDownload = outputSection.innerText; // Get the text content of outputSection
+      //   var blob = new Blob([textToDownload], { type: 'text/plain' }); // Create a Blob from the text
+      //   var url = URL.createObjectURL(blob); // Create a URL for the Blob
 
-        // Create a temporary anchor (`<a>`) element to trigger the download
-        var downloader = document.createElement('a');
-        downloader.href = url; // Set the href to the Blob URL
-        downloader.download = 'output.txt'; // Set the default filename for the download
+      //   // Create a temporary anchor (`<a>`) element to trigger the download
+      //   var downloader = document.createElement('a');
+      //   downloader.href = url; // Set the href to the Blob URL
+      //   downloader.download = 'output.txt'; // Set the default filename for the download
 
-        // Append the anchor to the body, click it, and then remove it
-        document.body.appendChild(downloader);
-        downloader.click();
-        document.body.removeChild(downloader);
-        // Revoke the Blob URL to free up resources
-        URL.revokeObjectURL(url);
-      });
+      //   // Append the anchor to the body, click it, and then remove it
+      //   document.body.appendChild(downloader);
+      //   downloader.click();
+      //   document.body.removeChild(downloader);
+      //   // Revoke the Blob URL to free up resources
+      //   URL.revokeObjectURL(url);
+      // });
     });
   </script>
 </body>

@@ -10,9 +10,18 @@ if development?
 end
 
 # Define a route at the root '/' of the app.
+#find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print
 get '/' do
+  if params['action'] == 'downloadToScratch'
+    command = Command.new
+    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /scratch/$USER/output.txt")
+  elsif params['action'] == 'downloadToHome'
+    command = Command.new
+    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /home/$USER/output.txt")
+  end
   command = Command.new
-  processes, error = command.exec
+  output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print")
+  output = command.parse(output)
 
-  erb :index, locals: { processes: processes, error: error }
+  erb :index, locals: { output: output, error: error }
 end
