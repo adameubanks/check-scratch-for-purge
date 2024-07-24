@@ -1,5 +1,5 @@
 ![UVA Research Computing Logo](https://learning.rc.virginia.edu/img/RC_logo.svg)
-# UVA Disk Usage App
+# UVA Check Purge App
 
 This is a Sinatra application that displays information about files in `/scratch` that will be purged on Open OnDemand at the University of Virginia, using Passenger as the application server.
 
