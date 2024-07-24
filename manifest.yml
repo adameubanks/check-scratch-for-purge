@@ -1,4 +1,4 @@
-name: check-scratch-for-purge
+name: Check Scratch For Purge
 description: See which items in your /scratch directory are being purged
 icon: fas://folder-open
 category: Files

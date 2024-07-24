@@ -7,7 +7,7 @@ This is a Sinatra application that displays information about files in `/scratch
 
 1. Create a new Sandbox app
 
-2. Insert the repository link and name the app `check-scratch-for-purge`
+2. Insert the repository link and name the app `CheckScratchForPurge`
 
 3. Open the app to get a real-time display of storage use
 
