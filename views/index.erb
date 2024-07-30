@@ -21,10 +21,10 @@
         <h3> Or </h3>
       </div>
       <div class="col-auto">
-        <form action="/" method="get">
-          <button type="submit" name="action" value="downloadToScratch" class="btn btn-primary">Download to Scratch</button>
-          <button type="submit" name="action" value="downloadToHome" class="btn btn-primary">Download to Home</button>
-          <button id="downloadLocally" class="btn btn-primary">Download Locally</button>
+        <form id="commandForm">
+          <button type="button" id="downloadToScratch" class="btn btn-primary">Download to Scratch</button>
+          <button type="button" id="downloadToHome" class="btn btn-primary">Download to Home</button>
+          <button type="button" id="downloadLocally" class="btn btn-primary">Download Locally</button>
         </form>
       </div>
     </div>
@@ -45,7 +45,7 @@
     document.addEventListener('DOMContentLoaded', (event) => {
       document.getElementById('toggleOutputBtn').addEventListener('click', function() {
         var outputSection = document.getElementById('outputSection');
-        if (outputSection) { // Check if the element exists
+        if (outputSection) {
           if (outputSection.style.display === 'none') {
             outputSection.style.display = 'block';
             this.textContent = 'Hide Output';
@@ -59,23 +59,44 @@
       });
       document.getElementById('downloadLocally').addEventListener('click', function() {
         var outputSection = document.getElementById('outputSection');
-        var textToDownload = outputSection.innerText; // Get the text content of outputSection
-        var blob = new Blob([textToDownload], { type: 'text/plain' }); // Create a Blob from the text
-        var url = URL.createObjectURL(blob); // Create a URL for the Blob
+        var textToDownload = outputSection.innerText;
+        var blob = new Blob([textToDownload], { type: 'text/plain' });
+        var url = URL.createObjectURL(blob);
 
-        // Create a temporary anchor (`<a>`) element to trigger the download
         var downloader = document.createElement('a');
-        downloader.href = url; // Set the href to the Blob URL
-        downloader.download = 'output.txt'; // Set the default filename for the download
-
-        // Append the anchor to the body, click it, and then remove it
+        downloader.href = url;
+        downloader.download = 'scratchFilesToBePurged.txt';
         document.body.appendChild(downloader);
         downloader.click();
         document.body.removeChild(downloader);
-        // Revoke the Blob URL to free up resources
         URL.revokeObjectURL(url);
       });
     });
+
+    document.getElementById('downloadToScratch').addEventListener('click', function() {
+      runCommand('downloadToScratch');
+    });
+
+    document.getElementById('downloadToHome').addEventListener('click', function() {
+      runCommand('downloadToHome');
+    });
+
+    function runCommand(action) {
+      fetch('/run_command', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: action })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('outputSection').style.display = 'block';
+        document.getElementById('output').innerText = data.output.join('\n');
+        document.getElementById('error').innerText = data.error || '';
+      })
+      .catch(error => console.error('Error:', error));
+    }
   </script>
 </body>
 </html>

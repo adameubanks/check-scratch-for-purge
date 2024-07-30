@@ -13,15 +13,12 @@ class Command
   end
 
   def exec(command)
-    processes, error = [], nil
-  
     stdout, stderr, status = Open3.capture3(command)
     stdout.force_encoding('UTF-8')
     
     output = stdout + stderr
+    error = status.success? ? nil : stderr
   
-    processes = output if status.success?
-  
-    [processes, error]
+    [output, error]
   end
 end
