@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -29,16 +30,9 @@
       </div>
     </div>
     <div id="outputSection" style="display: none;">
-      <% if error %>
-        <p>Error: <%= error %></p>
-      <% else %>
-        <p>These files will be purged:</p>
-        <ul>
-          <% output.each do |line| %>
-            <li><%= line %></li>
-          <% end %>
-        </ul>
-      <% end %>
+      <p id="error"></p>
+      <p id="fileCountMessage"></p>
+      <ul id="output"></ul>
     </div>
   </div>
   <script>
@@ -57,6 +51,7 @@
           console.error('Element with ID "outputSection" not found.');
         }
       });
+
       document.getElementById('downloadLocally').addEventListener('click', function() {
         var outputSection = document.getElementById('outputSection');
         var textToDownload = outputSection.innerText;
@@ -71,14 +66,14 @@
         document.body.removeChild(downloader);
         URL.revokeObjectURL(url);
       });
-    });
 
-    document.getElementById('downloadToScratch').addEventListener('click', function() {
-      runCommand('downloadToScratch');
-    });
+      document.getElementById('downloadToScratch').addEventListener('click', function() {
+        runCommand('downloadToScratch');
+      });
 
-    document.getElementById('downloadToHome').addEventListener('click', function() {
-      runCommand('downloadToHome');
+      document.getElementById('downloadToHome').addEventListener('click', function() {
+        runCommand('downloadToHome');
+      });
     });
 
     function runCommand(action) {
@@ -92,8 +87,14 @@
       .then(response => response.json())
       .then(data => {
         document.getElementById('outputSection').style.display = 'block';
-        document.getElementById('output').innerText = data.output.join('\n');
-        document.getElementById('error').innerText = data.error || '';
+        var output = data.output;
+        var error = data.error || '';
+
+        document.getElementById('error').innerText = error;
+        document.getElementById('output').innerHTML = output.map(line => `<li>${line}</li>`).join('');
+
+        var fileCountMessage = `The following ${output.length} files will be purged:`;
+        document.getElementById('fileCountMessage').innerText = fileCountMessage;
       })
       .catch(error => console.error('Error:', error));
     }

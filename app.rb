@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'erubi'
 require './command'
+require 'json'
 
 set :erb, :escape_html => true
 
@@ -19,13 +20,15 @@ end
 
 # Define a route to handle AJAX requests.
 post '/run_command' do
+  request_payload = JSON.parse(request.body.read)
+  action = request_payload['action']
+  
   command = Command.new
-  action = params[:action]
   case action
   when 'downloadToScratch'
-    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /scratch/$USER/output.txt")
+    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /scratch/$USER/scratchFilesToBePurged.txt")
   when 'downloadToHome'
-    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /home/$USER/output.txt")
+    output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print > /home/$USER/scratchFilesToBePurged.txt")
   else
     output, error = command.exec("find /scratch/$USER -type f -atime +90 -ctime +90 -mtime +90 -print")
   end
