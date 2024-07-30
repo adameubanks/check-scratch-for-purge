@@ -3,8 +3,70 @@
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
+  <script>
+    function toggleOutput() {
+      const outputDiv = document.getElementById('output');
+      if (outputDiv.style.display === 'none') {
+        outputDiv.style.display = 'block';
+        fetchOutput('/');
+      } else {
+        outputDiv.style.display = 'none';
+      }
+    }
+
+    function showOutput(output, error) {
+      const outputDiv = document.getElementById('output');
+      let outputHtml = '';
+      if (output) {
+        outputHtml += `<div class="alert alert-success" role="alert"><pre>${output}</pre></div>`;
+      }
+      if (error) {
+        outputHtml += `<div class="alert alert-danger" role="alert"><pre>${error}</pre></div>`;
+      }
+      outputDiv.innerHTML = outputHtml;
+    }
+
+    function downloadLocally(output) {
+      const blob = new Blob([output], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'scratchFilesToBePurged.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    async function fetchOutput(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('Data received:', data);  // Debugging line
+        showOutput(data.output.join('\n'), data.error);
+      } catch (error) {
+        showOutput('', `Error fetching data: ${error.message}`);
+      }
+    }
+
+    async function fetchAndDownloadLocally(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        downloadLocally(data.output);
+      } catch (error) {
+        showOutput('', `Error fetching data: ${error.message}`);
+      }
+    }
+  </script>
 </head>
-<body>  
+<body>
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #53565a;">
     <a class="navbar-brand" href="/pun/sys/dashboard/">UVA Open OnDemand</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,89 +77,16 @@
     <br>
     <h1>Check <span style="font-family: monospace; background-color: #f2f2f2;">/scratch</span> for purge</h1><br>
     <div class="row justify-content-center">
-      <div class="col-auto">
-        <button id="toggleOutputBtn" class="btn btn-primary">Show Output</button>
-      </div>
-      <div class="col-auto">
-        <h3> Or </h3>
-      </div>
-      <div class="col-auto">
-        <form id="commandForm">
-          <button type="button" id="downloadToScratch" class="btn btn-primary">Download to Scratch</button>
-          <button type="button" id="downloadToHome" class="btn btn-primary">Download to Home</button>
-          <button type="button" id="downloadLocally" class="btn btn-primary">Download Locally</button>
-        </form>
+      <div class="buttons">
+        <button class="btn btn-primary m-2" onclick="toggleOutput()">Show Output</button>
+        <button class="btn btn-secondary m-2" onclick="fetchOutput('/downloadToHome')">Download to Home</button>
+        <button class="btn btn-secondary m-2" onclick="fetchOutput('/downloadToScratch')">Download to Scratch</button>
+        <button class="btn btn-secondary m-2" onclick="fetchAndDownloadLocally('/downloadLocally')">Download Locally</button>
       </div>
     </div>
-    <div id="outputSection" style="display: none;">
-      <p id="error"></p>
-      <p id="fileCountMessage"></p>
-      <ul id="output"></ul>
+    <div id="output" class="mt-4" style="display: none;">
+      <!-- Initially empty; content will be populated by JavaScript -->
     </div>
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-      document.getElementById('toggleOutputBtn').addEventListener('click', function() {
-        var outputSection = document.getElementById('outputSection');
-        if (outputSection) {
-          if (outputSection.style.display === 'none') {
-            outputSection.style.display = 'block';
-            this.textContent = 'Hide Output';
-          } else {
-            outputSection.style.display = 'none';
-            this.textContent = 'Show Output';
-          }
-        } else {
-          console.error('Element with ID "outputSection" not found.');
-        }
-      });
-
-      document.getElementById('downloadLocally').addEventListener('click', function() {
-        var outputSection = document.getElementById('outputSection');
-        var textToDownload = outputSection.innerText;
-        var blob = new Blob([textToDownload], { type: 'text/plain' });
-        var url = URL.createObjectURL(blob);
-
-        var downloader = document.createElement('a');
-        downloader.href = url;
-        downloader.download = 'scratchFilesToBePurged.txt';
-        document.body.appendChild(downloader);
-        downloader.click();
-        document.body.removeChild(downloader);
-        URL.revokeObjectURL(url);
-      });
-
-      document.getElementById('downloadToScratch').addEventListener('click', function() {
-        runCommand('downloadToScratch');
-      });
-
-      document.getElementById('downloadToHome').addEventListener('click', function() {
-        runCommand('downloadToHome');
-      });
-    });
-
-    function runCommand(action) {
-      fetch('/run_command', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ action: action })
-      })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('outputSection').style.display = 'block';
-        var output = data.output;
-        var error = data.error || '';
-
-        document.getElementById('error').innerText = error;
-        document.getElementById('output').innerHTML = output.map(line => `<li>${line}</li>`).join('');
-
-        var fileCountMessage = `The following ${output.length} files will be purged:`;
-        document.getElementById('fileCountMessage').innerText = fileCountMessage;
-      })
-      .catch(error => console.error('Error:', error));
-    }
-  </script>
 </body>
 </html>
