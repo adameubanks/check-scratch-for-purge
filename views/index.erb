@@ -3,6 +3,21 @@
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .content {
+      flex: 1;
+    }
+    .footer {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #53565a;">
@@ -11,18 +26,28 @@
       <span class="navbar-toggler-icon"></span>
     </button>
   </nav>
-  <div class="container">
+  <div class="container content">
     <br>
-    <h1>Check <span style="font-family: monospace; background-color: #f2f2f2;">/scratch</span> for purge</h1><br>
+    <% if @message %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= @message %>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <% end %>
+    <h1>Scratch Purge Checker</h1>
+    <p>This tool allows you to view which files will be purged from <code>/scratch</code>. You can also download the list of files locally or save it to your home or scratch directories.</p>
     <div class="row justify-content-center">
       <div class="buttons">
-        <button class="btn btn-primary m-2" onclick="toggleOutput()">Show Output</button>
-        <a class="btn btn-secondary m-2" href="/downloadToHome">Download to Home</a>
-        <a class="btn btn-secondary m-2" href="/downloadToScratch">Download to Scratch</a>
+        <button class="btn btn-primary m-2" onclick="toggleOutput()">Show Files to be Purged</button>
+        <a class="btn btn-secondary m-2" id="downloadHome" href="#">Save to Home Directory</a>
+        <a class="btn btn-secondary m-2" id="downloadScratch" href="#">Save to Scratch Directory</a>
         <button class="btn btn-secondary m-2" onclick="downloadLocally()">Download Locally</button>
       </div>
     </div>
     <div id="output" class="mt-4" style="display: none;">
+      <h2>Files to be Purged</h2>
       <p>The following <%= @output.size %> files will be purged:</p>
       <ul>
         <div id="fileList">
@@ -33,7 +58,35 @@
       </ul>
     </div>
   </div>
+  <footer class="footer mt-4">
+    <h2>Scratch Purging Policy</h2>
+    <p>For more information on the policy for removing files in scratch after 90 days, please visit the <a href="https://www.rc.virginia.edu/2024/07/reinstatement-of-file-purging-of-personal-/scratch-files-on-afton-and-rivanna/" target="_blank">File Purging Policy</a> page.</p>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      let currentUrl = window.location.origin + window.location.pathname;
+
+      if (currentUrl.endsWith('/downloadToScratch')) {
+        currentUrl = currentUrl.replace('/downloadToScratch', '');
+      } else if (currentUrl.endsWith('/downloadToHome')) {
+        currentUrl = currentUrl.replace('/downloadToHome', '');
+      }
+      // Ensure the URL ends with a slash
+      if (!currentUrl.endsWith('/')) {
+        currentUrl += '/';
+      }
+
+      // Encode the URL
+      const downloadHomeUrl = encodeURI(`${currentUrl}downloadToHome`);
+      const downloadScratchUrl = encodeURI(`${currentUrl}downloadToScratch`);
+
+      document.getElementById('downloadHome').href = `${currentUrl}downloadToHome`;
+      document.getElementById('downloadScratch').href = `${currentUrl}downloadToScratch`;
+    });
+
     function toggleOutput() {
       const outputSection = document.getElementById('output');
       if (outputSection.style.display === 'none' || outputSection.style.display === '') {

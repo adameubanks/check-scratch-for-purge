@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'erubi'
 require './command'
-require 'json'
 
 set :erb, :escape_html => true
 
@@ -24,8 +23,10 @@ end
 get '/downloadToScratch' do
   command = Command.new
   output, error = command.exec("#{purge_command} > /scratch/$USER/scratchFilesToBePurged.txt")
-  content_type :json
-  { output: command.parse(output), error: error }.to_json
+  @output = command.parse(output)
+  @error = error
+  @message = "List of files to be purged has been downloaded to your /scratch directory as scratchFilesToBePurged.txt"
+  erb :index, locals: { output: @output, error: @error, message: @message }
 end
 
 get '/downloadToHome' do
@@ -33,5 +34,6 @@ get '/downloadToHome' do
   output, error = command.exec("#{purge_command} > /home/$USER/scratchFilesToBePurged.txt")
   @output = command.parse(output)
   @error = error
-  erb :index, locals: { output: @output, error: @error }
+  @message = "List of files to be purged has been downloaded to your /home directory as scratchFilesToBePurged.txt"
+  erb :index, locals: { output: @output, error: @error, message: @message }
 end
