@@ -3,68 +3,6 @@
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
-  <script>
-    function toggleOutput() {
-      const outputDiv = document.getElementById('output');
-      if (outputDiv.style.display === 'none') {
-        outputDiv.style.display = 'block';
-        fetchOutput('/');
-      } else {
-        outputDiv.style.display = 'none';
-      }
-    }
-
-    function showOutput(output, error) {
-      const outputDiv = document.getElementById('output');
-      let outputHtml = '';
-      if (output) {
-        outputHtml += `<div class="alert alert-success" role="alert"><pre>${output}</pre></div>`;
-      }
-      if (error) {
-        outputHtml += `<div class="alert alert-danger" role="alert"><pre>${error}</pre></div>`;
-      }
-      outputDiv.innerHTML = outputHtml;
-    }
-
-    function downloadLocally(output) {
-      const blob = new Blob([output], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'scratchFilesToBePurged.txt';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    async function fetchOutput(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        console.log('Data received:', data);  // Debugging line
-        showOutput(data.output.join('\n'), data.error);
-      } catch (error) {
-        showOutput('', `Error fetching data: ${error.message}`);
-      }
-    }
-
-    async function fetchAndDownloadLocally(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        downloadLocally(data.output);
-      } catch (error) {
-        showOutput('', `Error fetching data: ${error.message}`);
-      }
-    }
-  </script>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #53565a;">
@@ -79,14 +17,50 @@
     <div class="row justify-content-center">
       <div class="buttons">
         <button class="btn btn-primary m-2" onclick="toggleOutput()">Show Output</button>
-        <button class="btn btn-secondary m-2" onclick="fetchOutput('/downloadToHome')">Download to Home</button>
-        <button class="btn btn-secondary m-2" onclick="fetchOutput('/downloadToScratch')">Download to Scratch</button>
-        <button class="btn btn-secondary m-2" onclick="fetchAndDownloadLocally('/downloadLocally')">Download Locally</button>
+        <a class="btn btn-secondary m-2" href="/downloadToHome">Download to Home</a>
+        <a class="btn btn-secondary m-2" href="/downloadToScratch">Download to Scratch</a>
+        <button class="btn btn-secondary m-2" onclick="downloadLocally()">Download Locally</button>
       </div>
     </div>
     <div id="output" class="mt-4" style="display: none;">
-      <!-- Initially empty; content will be populated by JavaScript -->
+      <p>The following <%= @output.size %> files will be purged:</p>
+      <ul>
+        <div id="fileList">
+          <% @output.each do |line| %>
+          <li><%= line %></li>
+          <% end %>
+        </div>
+      </ul>
     </div>
   </div>
+  <script>
+    function toggleOutput() {
+      const outputSection = document.getElementById('output');
+      if (outputSection.style.display === 'none' || outputSection.style.display === '') {
+        outputSection.style.display = 'block';
+      } else {
+        outputSection.style.display = 'none';
+      }
+    }
+
+    function downloadLocally() {
+      // get files and format them for download
+      const outputSection = document.getElementById('fileList');
+      const textContent = outputSection.innerText
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .join('\n');
+      const blob = new Blob([textContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'scratchFilesToBePurged.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
 </body>
 </html>
