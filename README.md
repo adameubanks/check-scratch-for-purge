@@ -9,7 +9,7 @@ This is a Sinatra application that displays information about files in `/scratch
 
 2. Insert the repository link and name the app `CheckScratchForPurge`
 
-3. Open the app to get a real-time display of storage use
+3. Open the app to see which files in `/scratch` will soon be deleted. Download the names of these files to your `/home`, `/scratch` or even local directory.
 
 ## Contact
 
