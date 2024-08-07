@@ -1,9 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
-  <style>
+  <title>Disk Usage - UVA OpenOnDemand</title>
+  <link rel="shortcut icon" type="image/x-icon" href="/public/favicon.ico" />
+
+  <script src="/pun/sys/dashboard/assets/application-236fae757cad255084c5224d2905772a67d2181ab2a8e2ae1bb3a8393450b944.js" nonce="4EXpziO450cTWofblGS8WQ=="></script>
+  <link rel="preload stylesheet" media="all" href="/pun/sys/dashboard/assets/application-61a2626def60b5b92da2082b21be71733d493ea55ab120d99dc3030dcca4f201.css" nonce="4EXpziO450cTWofblGS8WQ==" as="style" type="text/css" />
+  <style nonce="4EXpziO450cTWofblGS8WQ==">
+    .navbar-dark {
+      background-color: #53565a;
+    }
+    .navbar-light {
+      background-color: #53565a;
+    }
+    .navbar-dark ul.navbar-nav>li.nav-item>a:focus,
+    .navbar-dark ul.navbar-nav>li.nav-item.show>a {
+      background-color: #fff;
+      border-radius: 0.25em;
+    }
+    .navbar-light ul.navbar-nav>li.nav-item>a:focus,
+    .navbar-light ul.navbar-nav>li.nav-item.show>a {
+      background-color: #fff;
+      border-radius: 0.25em;
+    }
     body {
       display: flex;
       flex-direction: column;
@@ -18,6 +37,20 @@
       text-align: center;
     }
   </style>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
+  <script src="/pun/sys/dashboard/assets/dashboard-42b56f7f42474effe1e8f2d4fa0300bf463bed5d4eec7db1c70badde9070c077.js" nonce="4EXpziO450cTWofblGS8WQ=="></script>
+  <script src="/pun/sys/dashboard/assets/pinned_apps-95c603b0cc05dad1a3e420b7ced9d8e2a926cd68ea8c86eb31bbb3d1b685ada1.js" nonce="4EXpziO450cTWofblGS8WQ=="></script>
+
+  <meta name="csrf-param" content="authenticity_token" />
+  <meta name="csrf-token" content="Ww-IlCp9x1ZqDy-0PTHx0X6l5Z1WVZMdR4RHeT_nWSxT3kIinz-1FLW5UmSck_yyHotCBoWfYcqD5h1lhDNWXw" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="profile" content="">
+  <!-- configuration options exposed to javascript -->
+  <div hidden id="ood_config" data-max-file-size="10737420000" data-transfers-path="/pun/sys/dashboard/transfers.json"
+    data-jobs-info-path="/pun/sys/dashboard/jobs/info" data-uppy-locale="{}" data-bc-dynamic-js="true"></div>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #53565a;">
