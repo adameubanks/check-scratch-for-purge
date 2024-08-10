@@ -287,13 +287,13 @@
       </div>
     <% end %>
     <h1>Check Scratch For Purge</h1>
-    <p>This tool allows you to view which files will be purged from <code>/scratch</code>. You can also download the list of files locally or save it to your home or scratch directories.</p>
+    <p>This tool allows you to view which files will be purged from <code>/scratch</code>. You can also download a list of the filenames to be purged locally or save it to your home or scratch directories.</p>
     <div class="row justify-content-center">
       <div class="buttons">
         <button class="btn btn-primary m-2" onclick="toggleOutput()">Show Files to be Purged</button>
-        <a class="btn btn-secondary m-2" id="downloadHome" href="#">Save to Home Directory</a>
-        <a class="btn btn-secondary m-2" id="downloadScratch" href="#">Save to Scratch Directory</a>
-        <button class="btn btn-secondary m-2" onclick="downloadLocally()">Download Locally</button>
+        <a class="btn btn-secondary m-2" id="downloadHome" href="#">Save Filenames to Home Directory</a>
+        <a class="btn btn-secondary m-2" id="downloadScratch" href="#">Save Filenames to Scratch Directory</a>
+        <button class="btn btn-secondary m-2" onclick="downloadLocally()">Download Filenames Locally</button>
       </div>
     </div>
     <div id="output" class="mt-4" style="display: none;">
